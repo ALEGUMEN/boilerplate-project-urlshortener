@@ -30,7 +30,13 @@ let idCounter = 1;
 app.post('/api/shorturl', (req, res) => {
   const originalUrl = req.body.url;
 
-  // Verificar si la URL tiene un host válido
+  // Validar que comience con http:// o https://
+  const urlPattern = /^(http|https):\/\/\w+/;
+  if (!urlPattern.test(originalUrl)) {
+    return res.json({ error: 'invalid url' });
+  }
+
+  // Extraer host para dns.lookup
   const hostname = url.parse(originalUrl).hostname;
 
   dns.lookup(hostname, (err) => {
